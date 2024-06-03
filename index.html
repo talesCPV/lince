@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="backend/score.js"></script>
+    <title>Lince</title>
+    <style>
+
+        @font-face {
+            font-family: PressStart;
+            src: url(assets/press_start.ttf);
+        }
+
+        *{
+            font-family: pressStart;
+        }
+
+        .top{
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            gap: 15px;
+        }
+
+        .find{
+            border: solid 2px rgb(245, 21, 140);
+            border-radius: 15px;
+        }
+
+        #btnStart{
+            padding: 10px;
+            background-color: cadetblue;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            }
+
+        #edtTempo{
+            font-size: 1.5em;
+            /*font-family: pressStart;*/
+            border: none;
+        }
+
+        /*  MOBILE  */
+
+        @media all and (max-width : 768px) {
+            
+            table{
+                margin: auto;
+            }
+            
+            .top{
+                flex-direction: column;
+            }
+            .top *{
+                text-align: center;
+            }
+            .center{
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="top">
+        <label for="edtTempo">TEMPO</label>
+        <input type="text" id="edtTempo" readonly value="00:00">
+        <button id="btnStart">Começar</button>
+        <label id="lblNomes"></label>
+    </div>
+
+    <div class="board"></div>
+    
+</body>
+<script>
+
+    var tempo = 0
+    var hiscore = []
+    setInterval(()=>{
+        
+        if(document.querySelector('#btnStart').innerHTML.trim()=='LINCE'){
+            tempo++
+            document.querySelector('#edtTempo').value = Math.floor(tempo/60).toString().padStart(2,0)+':'+(tempo%60).toString().padStart(2,0)
+        }else{
+            document.querySelector('#edtTempo').value = '00:00'
+        }
+    }, 1000);  
+
+    const objetivo = []
+
+    const objetos = ['DESPERTADOR','MAÇA','MACHADO','MOCHILA','CAMA','BICICLETA','BINÓCULOS','LIQUIDIFICADOR',
+        'ESTANTE','VASSOURA','BOLO','BARCO','CARRO','CENOURA','CELULAR','SACA ROLHA','SOFÁ','ESCRIVANINHA','CÔMODA',
+        'FURADEIRA','BRINCOS','FRISBEE','LUVAS','RALADOR','CHURRASQUEIRA','VIOLÃO','SECADOR','LANCHE','BONÉ','CAPACETE',
+        'FERRO DE PASSAR','CHAVE','TECLADO','LÂMPADA','MICROFONE','CANECA','JORNAL','CALÇA','CLIPS','PIANO','PORTA RETRATO',
+        'TRAVESSEIRO','PIZZA','BOLSA','RODO','PANELA','SAXOFONE','BALANÇA','TESOURA','CHAVE DE FENDA','SAPATO','SKATE',
+        'CAIXAS DE SOM','MANTEIGA','COLHER','BANQUINHO','FOGÃO','MORANGO','RAQUETE','BARRACA','VASO SANITÁRIO','CAIXA DE FERRAMENTAS',
+        'ESCOVA DE DENTE','CAMISETA','TV','ASPIRADOR','VASO','CARTEIRA','RELÓGIO','REGADOR','CARRINHO DE MÃO','TAÇA']
+
+const sprites = [
+        {'x':0,  'y':0, 'w':60,'h':70},
+        {'x':79, 'y':0, 'w':60,'h':70},
+        {'x':158,'y':0, 'w':60,'h':35},
+        {'x':210,'y':0, 'w':60,'h':70},
+        {'x':287,'y':0, 'w':60,'h':50},
+        {'x':358,'y':0, 'w':61,'h':50},
+        {'x':420,'y':0, 'w':61,'h':70},
+        {'x':485,'y':0, 'w':61,'h':70},
+        {'x':558,'y':0, 'w':61,'h':70},
+        {'x':615,'y':0, 'w':61,'h':70},
+        {'x':708,'y':0, 'w':61,'h':70},
+        {'x':778,'y':0, 'w':61,'h':50},
+        {'x':4,  'y':70,'w':70,'h':35},
+        {'x':74, 'y':70,'w':25,'h':70},
+        {'x':145,'y':70,'w':60,'h':70},
+        {'x':215,'y':70,'w':60,'h':70},
+        {'x':283,'y':70,'w':70,'h':40},
+        {'x':350,'y':70,'w':70,'h':50},
+        {'x':422,'y':70,'w':70,'h':50},
+        {'x':490,'y':70,'w':75,'h':70},
+        {'x':560,'y':70,'w':75,'h':70},
+        {'x':633,'y':70,'w':75,'h':60},
+        {'x':700,'y':70,'w':75,'h':70},
+        {'x':770,'y':70,'w':50,'h':70},
+        {'x':7,'y':140,'w':70,'h':70},
+        {'x':70,'y':140,'w':40,'h':70},
+        {'x':140,'y':140,'w':70,'h':70},
+        {'x':215,'y':140,'w':70,'h':50},
+        {'x':285,'y':140,'w':70,'h':50},
+        {'x':350,'y':140,'w':70,'h':70},
+        {'x':420,'y':140,'w':70,'h':60},
+        {'x':490,'y':140,'w':40,'h':60},
+        {'x':560,'y':140,'w':75,'h':40},
+        {'x':630,'y':140,'w':50,'h':70},
+        {'x':700,'y':140,'w':75,'h':30},
+        {'x':770,'y':140,'w':70,'h':70},
+        {'x':0,'y':210,'w':70,'h':50},
+        {'x':70,'y':210,'w':50,'h':70},
+        {'x':140,'y':210,'w':70,'h':30},
+        {'x':210,'y':210,'w':75,'h':60},
+        {'x':280,'y':210,'w':70,'h':70},
+        {'x':350,'y':210,'w':70,'h':50},
+        {'x':420,'y':210,'w':50,'h':70},
+        {'x':490,'y':210,'w':70,'h':70},
+        {'x':560,'y':210,'w':70,'h':50},
+        {'x':630,'y':210,'w':70,'h':40},
+        {'x':700,'y':210,'w':70,'h':70},
+        {'x':770,'y':210,'w':75,'h':60},
+        {'x':0,'y':280,'w':70,'h':70},
+        {'x':70,'y':280,'w':70,'h':40},
+        {'x':140,'y':280,'w':70,'h':40},
+        {'x':210,'y':280,'w':70,'h':20},
+        {'x':280,'y':280,'w':70,'h':70},
+        {'x':350,'y':280,'w':70,'h':50},
+        {'x':420,'y':280,'w':70,'h':70},
+        {'x':490,'y':280,'w':40,'h':70},
+        {'x':560,'y':280,'w':60,'h':70},
+        {'x':630,'y':280,'w':50,'h':70},
+        {'x':700,'y':280,'w':75,'h':70},
+        {'x':770,'y':280,'w':75,'h':50},
+        {'x':0,'y':350,'w':50,'h':70},
+        {'x':70,'y':350,'w':75,'h':70},
+        {'x':140,'y':350,'w':20,'h':70},
+        {'x':210,'y':350,'w':70,'h':70},
+        {'x':280,'y':350,'w':70,'h':70},
+        {'x':350,'y':350,'w':70,'h':70},
+        {'x':420,'y':350,'w':50,'h':70},
+        {'x':490,'y':350,'w':70,'h':50},
+        {'x':560,'y':350,'w':75,'h':60},
+        {'x':630,'y':350,'w':75,'h':50},
+        {'x':700,'y':350,'w':75,'h':50},
+        {'x':770,'y':350,'w':40,'h':70}
+    ]
+
+    function loadImg(path, id,crop={'x':0,'y':0,'w':60,'h':70}) {
+        var ctx = document.getElementById(id);
+        if (ctx.getContext) {
+            ctx = ctx.getContext('2d');
+            var img = new Image()
+            img.src = path
+            img.onload = ()=> {
+                const sx = (80-crop.w)/2
+                const sy = (80-crop.h)/2
+                ctx.drawImage(img, crop.x, crop.y,crop.w,crop.h,sx,sy,crop.w,crop.h)
+            }            
+        }
+    }
+
+    function drawGrid(){
+        const div = document.querySelector('.board')
+        div.innerHTML = ''
+        const order = sortPic()
+        for(let i=0; i<sprites.length; i++){
+            const cnv = document.createElement('canvas')
+            cnv.id = 'cnv-'+(i+1)
+            cnv.width = 80
+            cnv.height = 80
+            cnv.img = i
+            cnv.className = ''
+
+            cnv.addEventListener('click',()=>{
+                if(objetivo.includes(objetos[order[i]])){
+                    cnv.classList.add('find')
+                }
+
+            })
+          
+            div.appendChild(cnv)
+            loadImg('assets/sheet.png',cnv.id, sprites[order[i]])
+        }
+    }
+
+    function sortPic(){
+        const out = []
+        const pic = []
+        for(let i=0; i<sprites.length; i++){
+            let look = 0
+            do{
+                look = Math.floor(Math.random()*sprites.length)
+            }while(pic.filter(n=> n==look).length >=  1)
+           pic.push(look)
+        }
+        return pic
+    }
+
+    document.querySelector('#btnStart').addEventListener('click',()=>{
+        
+        const btn = document.querySelector('#btnStart')
+
+        if(btn.innerHTML.trim() == 'Começar'){
+            drawGrid()
+            btn.innerHTML = 'LINCE'
+            tempo=0
+            const nomes = document.querySelector('#lblNomes')
+            nomes.innerHTML = ''
+            objetivo.splice(0,objetivo.length)
+
+            while(objetivo.length<5){
+                const sort = Math.floor(Math.random()*sprites.length)
+                if(!objetivo.includes(objetos[sort])){
+                    objetivo.push(objetos[sort])
+                    nomes.innerHTML += ((objetivo.length>1 ? ', ':'')+objetos[sort]) 
+                }
+            }
+        }else{
+            const find = document.querySelectorAll('.find').length
+            if(find == 5){
+                alert('LINCE!!! ' + document.querySelector('#edtTempo').value)
+                setScore(tempo)
+            }else{
+                alert('Você Perdeu!!!')
+                
+            }
+            btn.innerHTML = 'Começar'
+            getScore()
+            document.querySelector('#lblNomes').innerHTML = ''
+        }
+        
+        
+    })
+
+    getScore()   
+
+</script>
+</html>
