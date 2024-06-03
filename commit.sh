@@ -15,10 +15,10 @@ then
 
     git commit -m "by_script"
 
-#    git branch -M main
+   git branch -M master
 #    git remote add origin git@github.com:talesCPV/lince.git
     git remote set-url origin git@github.com:talesCPV/lince.git
 
-    git push -u -f origin main
+    git push -u -f origin master
 
 fi
